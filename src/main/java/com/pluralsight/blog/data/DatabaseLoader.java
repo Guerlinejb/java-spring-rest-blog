@@ -15,6 +15,7 @@ import java.util.stream.IntStream;
 @Component
 public class DatabaseLoader implements ApplicationRunner {
     private final PostRepository postRepository;
+    private final AuthorRepository authorRepository;
     private final String[] templates = {
             "Smart Home %s", "Mobile %s - For When You're On he Go", "The %s - Your New Favorite Accessory"};
     private final String[] gadgets = {
@@ -23,12 +24,23 @@ public class DatabaseLoader implements ApplicationRunner {
     public List<Author> authors = new ArrayList<>();
 
     @Autowired
-    public DatabaseLoader(PostRepository postRepository) {
+    public DatabaseLoader(PostRepository postRepository, AuthorRepository authorRepository) {
         this.postRepository = postRepository;
+        this.authorRepository = authorRepository;
     }
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        //Authors
+        authors.addAll(Arrays.asList(
+                new Author("sholderness", "Sarah",  "Holderness", "password"),
+                new Author("tbell", "Tom",  "Bell", "password"),
+                new Author("efisher", "Eric",  "Fisher", "password"),
+                new Author("csouza", "Carlos",  "Souza", "password")
+        ));
+        authorRepository.saveAll(authors);
+
+        //Posts
         IntStream.range(0,40).forEach(i->{
             String template = templates[i % templates.length];
             String gadget = gadgets[i % gadgets.length];
